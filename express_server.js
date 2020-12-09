@@ -6,10 +6,16 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
 
-function generateRandomString(max) {
-  max = 6;
-  let randonString =  Math.floor(Math.random() * Math.floor(max));
-  return randonString.join(",");
+generateRandomString = function(max) {
+  let charSet = "abcdefghijklmnopqrstuvwx123456789";
+  let randomString = [];
+  
+  for(let i = 1; i <= 6; i++) {
+    randomString.push(charSet.charAt(Math.floor(Math.random() * charSet.length)));
+  }
+  console.log(randomString); //printing for testing
+
+  return randomString.join("");
 }
 
 const urlDatabase = {
@@ -43,11 +49,19 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  //shortURL = `/urls/${generateRandomString(6)}`;
+  //console.log(shortURL); //prinnt for testing
   const templateVars = {shortURL: req.params.shortURL, longURL:req.params.longURL};
   res.render("urls_show", templateVars);
 });
 
-app.post("urls", (req, res) => {
+app.post("/urls", (req, res) => {
   console.log(req.body);
-  res.send("Ok");
-})
+    res.send(req.body);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+});
+
